@@ -4,6 +4,7 @@ var velocity = Vector2.ZERO
 var maxHorizontalSpeed = 125
 var horizontalAcceleration = 1000
 var jumpSpeed = 340
+var jumpTerminationMultiplayer = 3
 
 func _ready():
 	pass 
@@ -22,6 +23,9 @@ func _process(delta):
 	if (moveVector.y < 0 && is_on_floor()):
 		velocity.y = moveVector.y * jumpSpeed
 	
-	velocity.y += gravity*delta
+	if (velocity.y < 0 && !Input.is_action_pressed("jump")):
+		velocity.y += gravity * jumpTerminationMultiplayer * delta
+	else: velocity.y += gravity*delta
+
 	velocity = move_and_slide(velocity, Vector2.UP)
 	
