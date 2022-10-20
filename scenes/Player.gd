@@ -1,8 +1,9 @@
 extends KinematicBody2D
-var gravity = 500
+var gravity = 1000
 var velocity = Vector2.ZERO
-var maxHorizontalSpeed = 100
-var jumpSpeed = 200
+var maxHorizontalSpeed = 125
+var horizontalAcceleration = 1000
+var jumpSpeed = 340
 
 func _ready():
 	pass 
@@ -12,7 +13,12 @@ func _process(delta):
 	moveVector.x = Input.get_action_strength("move_right") - Input.get_action_strength("move_left")
 	moveVector.y = -1 if Input.is_action_just_pressed("jump") else 0
 	
-	velocity.x = moveVector.x*maxHorizontalSpeed
+	velocity.x += moveVector.x * horizontalAcceleration * delta
+	if (moveVector.x == 0) :
+		velocity.x = lerp(0, velocity.x, pow(2, -50 * delta))
+		
+	velocity.x = clamp(velocity.x, - maxHorizontalSpeed, maxHorizontalSpeed)
+	
 	if (moveVector.y < 0 && is_on_floor()):
 		velocity.y = moveVector.y * jumpSpeed
 	
